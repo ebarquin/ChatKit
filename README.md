@@ -1,97 +1,71 @@
 # ChatKit
+[![Swift Package Manager](https://img.shields.io/badge/SPM-supported-green.svg)](https://github.com/ebarquin/ChatKit)
+[![GitHub license](https://img.shields.io/github/license/ebarquin/ChatKit)](https://github.com/ebarquin/ChatKit/blob/main/LICENSE)
+[![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20tvOS-lightgrey)]()
 
-**ChatKit** is a lightweight SwiftUI chat UI SDK designed to act as a **pure rendering client** for LLM-based conversations.
+ChatKit is a lightweight, UI-focused SwiftUI SDK for building chat interfaces in iOS apps.
 
-It does **not** perform networking, inference, or prompt management.  
-You bring the messages — **ChatKit renders them**.
+It is intentionally **LLM-agnostic**: ChatKit does not perform networking, streaming, or model inference.
+You control how messages are produced; ChatKit only renders what you give it.
 
 ---
 
 ## ✨ Features
 
-- SwiftUI-native chat UI
-- User / assistant / system message rendering
-- Quick prompts bar
-- Configurable appearance & layout
-- Explicit conversation phases (`ready`, `awaitingAssistant`, `error`)
+- SwiftUI-first, modern architecture
+- Fully customizable appearance and layout
+- Decoupled from LLMs and backends
+- Quick prompts support
+- Awaiting / loading states
 - Example app included
-- No assumptions about LLMs or networking
 
 ---
 
-## 🚫 What ChatKit is NOT
+## 🚀 Quick Start
 
-- ❌ Not an LLM client
-- ❌ Not a networking layer
-- ❌ Not a conversation manager
-- ❌ Not opinionated about prompts or responses
+### 1. Add ChatKit via Swift Package Manager
 
-ChatKit **only renders what you give it**.
+In Xcode:
 
----
+**File → Add Packages…**  
+Paste the repository URL:
 
-## 📦 Installation (Swift Package Manager)
-
-```swift
-.package(
-    url: "https://github.com/ebarquin/ChatKit.git",
-    from: "0.1.0"
-)
+```
+https://github.com/ebarquin/ChatKit
 ```
 
 ---
 
-## 🧠 Core Concepts
+### 2. Create a `ChatViewModel`
 
-### ChatMessage
-
-```swift
-ChatMessage(
-    role: .user | .assistant | .system,
-    content: String,
-    status: .completed
-)
-```
-
-ChatKit does **not** infer roles.  
-If you pass two assistant messages in a row, both will be rendered.
-
----
-
-### ChatViewModel
-
-You provide a callback that is triggered when the user sends a message:
+ChatKit does **not** perform any network or LLM logic.  
+You are responsible for sending messages to your backend or model and feeding responses back into the SDK.
 
 ```swift
+import ChatKit
+
 let viewModel = ChatViewModel(
     initialMessages: [],
-    quickPrompts: [...],
+    quickPrompts: [
+        QuickPrompt(title: "Explain this"),
+        QuickPrompt(title: "Summarize"),
+        QuickPrompt(title: "Give an example")
+    ],
     onSend: { message in
-        // Send message to your LLM here
+        // Called when the user sends a message.
+        // Forward `message` to your LLM or backend here.
     }
 )
 ```
 
-When your LLM responds:
-
-```swift
-viewModel.appendMessage(
-    ChatMessage(
-        role: .assistant,
-        content: "Hello!",
-        status: .completed
-    )
-)
-```
-
 ---
 
-## 🖼️ ChatView
+### 3. Render the chat UI
 
 ```swift
 ChatView(
     viewModel: viewModel,
-    appearance: appearancePair,
+    appearance: .default,
     layout: .default,
     behavior: .default
 )
@@ -99,53 +73,80 @@ ChatView(
 
 ---
 
-## 🎨 Appearance & Theming
+### 4. Append assistant responses
 
-ChatKit supports **explicit light & dark configurations** using `ChatAppearancePair`.
+When your LLM or backend responds, simply inject messages back into the view model:
 
 ```swift
-let appearance = ChatAppearancePair(
-    light: ChatAppearance(...),
-    dark: ChatAppearance(...)
+viewModel.appendMessage(
+    ChatMessage(
+        role: .assistant,
+        content: "Here is the response from the assistant.",
+        status: .completed
+    )
 )
 ```
 
-If you only provide one appearance, it will be used for both light and dark modes.
+ChatKit will automatically update the UI.
 
 ---
 
-## ⏳ Conversation State
+### 5. Handle loading and error states (optional)
 
-ChatKit exposes a `ChatPhase` enum:
+```swift
+viewModel.setAwaitingAssistant()
 
-- `ready`
-- `awaitingAssistant`
-- `error(String)`
+// On error:
+viewModel.setError("Something went wrong")
 
-You decide how and when these states transition.
+// To reset:
+viewModel.resetError()
+```
 
 ---
 
-## 🧪 Example App
+## 🧠 Design Philosophy
 
-The repository includes **ChatKitExample**, showcasing:
+- ChatKit is a **rendering client**, not a chat engine.
+- It does not care how many assistant messages you send.
+- It does not enforce request/response symmetry.
+- If you send two assistant messages in a row, both are rendered.
 
-- Fake LLM responses
-- Quick prompts
-- Awaiting assistant UI
-- Styling and layout configuration
+This makes ChatKit suitable for:
+- LLM-based apps
+- Rule-based assistants
+- Customer support chats
+- Educational tools
 
-The example is meant as a **reference and smoke test**, not as a production app.
+---
+
+## 📦 Repository Structure
+
+```
+ChatKit/
+├── ChatKit/           # Swift Package
+├── ChatKitExample/    # Example iOS app
+└── ChatKit.xcworkspace
+```
+
+---
+
+## 🛣 Roadmap
+
+- Streaming / typing effects
+- More built-in appearance presets
+- Message attachments
+- Accessibility refinements
+
+---
+
+## 🚧 Status
+
+This project is in active development.
+Public API stability is not guaranteed before 1.0.0.
 
 ---
 
 ## 📄 License
 
 MIT
-
----
-
-## 🚧 Status
-
-This project is in **active development**.  
-Public API stability is not guaranteed before `1.0.0`.

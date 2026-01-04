@@ -1,13 +1,13 @@
 import SwiftUI
 
-struct MessageRowView: View {
+public struct MessageRowView: View {
 
     let message: ChatMessage
     let appearance: ChatAppearance
     let layout: ChatLayout
     let maxBubbleWidth: CGFloat
 
-    init(
+    public init(
         message: ChatMessage,
         appearance: ChatAppearance,
         layout: ChatLayout,
@@ -19,7 +19,7 @@ struct MessageRowView: View {
         self.maxBubbleWidth = maxBubbleWidth
     }
 
-    var body: some View {
+    public var body: some View {
         switch message.role {
         case .system:
             systemMessage

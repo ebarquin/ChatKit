@@ -16,7 +16,7 @@ public final class ChatViewModel: ObservableObject {
 
     // MARK: - Callbacks (owned by consumer)
 
-    public var onSend: (ChatMessage) -> Void
+    public let onSend: (ChatMessage) -> Void
 
     // MARK: - Init
 

@@ -2,11 +2,11 @@ import SwiftUI
 
 public struct ChatLayout: Sendable {
 
-    public var messageSpacing: CGFloat
-    public var maxBubbleWidthRatio: CGFloat  // 0.0 ... 1.0
-    public var horizontalPadding: CGFloat
-    public var verticalPadding: CGFloat
-    public var minSpacer: CGFloat
+    public let messageSpacing: CGFloat
+    public let maxBubbleWidthRatio: CGFloat  // 0.0 ... 1.0
+    public let horizontalPadding: CGFloat
+    public let verticalPadding: CGFloat
+    public let minSpacer: CGFloat
 
     public init(
         messageSpacing: CGFloat = 12,

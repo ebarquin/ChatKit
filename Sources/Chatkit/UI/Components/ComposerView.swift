@@ -5,11 +5,11 @@ import SwiftUI
 /// in-flight operations (e.g. cancel a request or streaming response).
 public struct ComposerView: View {
 
-    let placeholder: String
-    let behavior: ChatBehavior
-    let sendButtonColor: Color
-    let onSend: (String) -> Void
-    let onCancel: (() -> Void)?
+    private let placeholder: String
+    private let behavior: ChatBehavior
+    private let sendButtonColor: Color
+    private let onSend: (String) -> Void
+    private let onCancel: (() -> Void)?
 
     @State private var text: String = ""
 

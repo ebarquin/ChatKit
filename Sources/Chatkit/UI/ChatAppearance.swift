@@ -12,12 +12,12 @@ import SwiftUI
 /// and use `ChatAppearancePair` to select between them.
 public struct ChatAppearance: Sendable {
 
-    public var background: Color
-    public var font: Font
-    public var contentPadding: CGFloat
+    public let background: Color
+    public let font: Font
+    public let contentPadding: CGFloat
 
-    public var userBubble: BubbleStyle
-    public var assistantBubble: BubbleStyle
+    public let userBubble: BubbleStyle
+    public let assistantBubble: BubbleStyle
 
     public init(
         background: Color,
@@ -109,9 +109,9 @@ public extension ChatAppearance {
 // MARK: - BubbleStyle
 
 public struct BubbleStyle: Sendable {
-    public var background: Color
-    public var foreground: Color
-    public var cornerRadius: CGFloat
+    public let background: Color
+    public let foreground: Color
+    public let cornerRadius: CGFloat
 
     public init(
         background: Color,

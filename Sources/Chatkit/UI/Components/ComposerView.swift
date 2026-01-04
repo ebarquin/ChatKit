@@ -1,5 +1,8 @@
 import SwiftUI
 
+/// ComposerView is a lightweight message input component.
+/// The optional cancel action allows consumers to interrupt
+/// in-flight operations (e.g. cancel a request or streaming response).
 public struct ComposerView: View {
 
     let placeholder: String
@@ -35,6 +38,17 @@ private extension ComposerView {
 
     var minimalComposer: some View {
         HStack(spacing: 8) {
+            if behavior.showsCancelButton, let onCancel {
+                Button {
+                    onCancel()
+                    text = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             inputField
 
             sendButton

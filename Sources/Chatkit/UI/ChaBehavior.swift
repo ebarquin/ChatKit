@@ -1,8 +1,10 @@
 public struct ChatBehavior: Sendable {
 
-    public var autoScroll: Bool
-    public var sendOnReturn: Bool
-    public var showsCancelButton: Bool
+    /// Automatically scrolls the chat to the latest message
+    /// when new messages are appended.
+    public let autoScroll: Bool
+    public let sendOnReturn: Bool
+    public let showsCancelButton: Bool
 
     public init(
         autoScroll: Bool,

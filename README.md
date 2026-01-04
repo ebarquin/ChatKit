@@ -3,21 +3,24 @@
 [![GitHub license](https://img.shields.io/github/license/ebarquin/ChatKit)](https://github.com/ebarquin/ChatKit/blob/main/LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20tvOS-lightgrey)]()
 
-ChatKit is a lightweight, UI-focused SwiftUI SDK for building chat interfaces in iOS apps.
+ChatKit is a lightweight SwiftUI chat UI framework focused exclusively on rendering messages.
 
-It is intentionally **LLM-agnostic**: ChatKit does not perform networking, streaming, or model inference.
-You control how messages are produced; ChatKit only renders what you give it.
+It is intentionally **LLM-agnostic**:
+- It does not talk to language models
+- It does not perform networking
+- It does not manage conversational logic
+
+ChatKit renders whatever messages you provide, in the order you provide them.
 
 ---
 
 ## ✨ Features
 
-- SwiftUI-first, modern architecture
-- Fully customizable appearance and layout
-- Decoupled from LLMs and backends
-- Quick prompts support
-- Awaiting / loading states
-- Example app included
+- Pure SwiftUI chat UI
+- Fully decoupled from LLMs and backends
+- Predictable, message-driven rendering
+- Customizable appearance, layout, and behavior
+- Explicit awaiting / loading states
 
 ---
 
@@ -46,11 +49,7 @@ import ChatKit
 
 let viewModel = ChatViewModel(
     initialMessages: [],
-    quickPrompts: [
-        QuickPrompt(title: "Explain this"),
-        QuickPrompt(title: "Summarize"),
-        QuickPrompt(title: "Give an example")
-    ],
+    quickPrompts: [],
     onSend: { message in
         // Called when the user sends a message.
         // Forward `message` to your LLM or backend here.
@@ -91,32 +90,18 @@ ChatKit will automatically update the UI.
 
 ---
 
-### 5. Handle loading and error states (optional)
-
-```swift
-viewModel.setAwaitingAssistant()
-
-// On error:
-viewModel.setError("Something went wrong")
-
-// To reset:
-viewModel.resetError()
-```
-
----
-
 ## 🧠 Design Philosophy
 
-- ChatKit is a **rendering client**, not a chat engine.
-- It does not care how many assistant messages you send.
-- It does not enforce request/response symmetry.
-- If you send two assistant messages in a row, both are rendered.
+ChatKit is a rendering client, not a chat engine.
 
-This makes ChatKit suitable for:
-- LLM-based apps
-- Rule-based assistants
-- Customer support chats
-- Educational tools
+- It does not enforce user/assistant alternation
+- It does not assume request/response symmetry
+- It does not manage retries, streaming, or tool calls
+
+If you send two assistant messages in a row, both will be rendered.
+If you inject system messages mid‑conversation, they will appear in place.
+
+All conversational rules live outside ChatKit.
 
 ---
 
@@ -131,19 +116,23 @@ ChatKit/
 
 ---
 
-## 🛣 Roadmap
+## 🛣 Scope
 
-- Streaming / typing effects
-- More built-in appearance presets
-- Message attachments
-- Accessibility refinements
+ChatKit 1.0 focuses on API stability and architectural clarity.
+
+The following are intentionally out of scope:
+- Streaming helpers
+- Multi‑turn orchestration
+- Agent abstractions
+- Networking or LLM clients
 
 ---
 
 ## 🚧 Status
 
-This project is in active development.
-Public API stability is not guaranteed before 1.0.0.
+ChatKit 1.0 provides a stable public API focused on rendering and composition.
+
+Future versions may explore additional helpers, but the core rendering model is expected to remain stable.
 
 ---
 

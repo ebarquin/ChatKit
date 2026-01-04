@@ -6,21 +6,8 @@ public struct ChatConfiguration {
 
     public init(
         initialMessages: [ChatMessage] = [],
-        placeholder: String = "Escribe un mensaje…",
-        quickPrompts: [QuickPrompt] = [
-            QuickPrompt(
-                        title: "Resume this",
-                        message: "Can you summarize the previous answer?"
-                    ),
-                    QuickPrompt(
-                        title: "Give examples",
-                        message: "Can you give concrete examples?"
-                    ),
-                    QuickPrompt(
-                        title: "Explain like I'm 5",
-                        message: "Explain this in simple terms."
-                    )
-        ]
+        placeholder: String = "Type a message…",
+        quickPrompts: [QuickPrompt] = []
     ) {
         self.initialMessages = initialMessages
         self.placeholder = placeholder

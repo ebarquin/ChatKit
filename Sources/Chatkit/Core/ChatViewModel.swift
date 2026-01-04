@@ -12,6 +12,7 @@ public final class ChatViewModel: ObservableObject {
     // MARK: - Configuration
 
     public let quickPrompts: [QuickPrompt]
+    public let awaitingMode: AwaitingMode
 
     // MARK: - Callbacks (owned by consumer)
 
@@ -22,10 +23,12 @@ public final class ChatViewModel: ObservableObject {
     public init(
         initialMessages: [ChatMessage] = [],
         quickPrompts: [QuickPrompt] = [],
+        awaitingMode: AwaitingMode = .automatic,
         onSend: @escaping (ChatMessage) -> Void
     ) {
         self.messages = initialMessages
         self.quickPrompts = quickPrompts
+        self.awaitingMode = awaitingMode
         self.onSend = onSend
     }
 
@@ -42,7 +45,9 @@ public final class ChatViewModel: ObservableObject {
         )
 
         messages.append(message)
-        phase = .awaitingAssistant
+        if awaitingMode == .automatic {
+            phase = .awaitingAssistant
+        }
         onSend(message)
     }
 
@@ -53,22 +58,24 @@ public final class ChatViewModel: ObservableObject {
     /// Consumer injects messages (assistant, system, user… we don't care)
     public func appendMessage(_ message: ChatMessage) {
         messages.append(message)
-
-        if message.role == .assistant {
+        if awaitingMode == .automatic, message.role == .assistant {
             phase = .ready
         }
     }
 
     public func appendMessages(_ newMessages: [ChatMessage]) {
         messages.append(contentsOf: newMessages)
-
-        if newMessages.contains(where: { $0.role == .assistant }) {
+        if awaitingMode == .automatic, newMessages.contains(where: { $0.role == .assistant }) {
             phase = .ready
         }
     }
 
-    public func setAwaitingAssistant() {
+    public func startAwaitingAssistant() {
         phase = .awaitingAssistant
+    }
+
+    public func stopAwaitingAssistant() {
+        phase = .ready
     }
 
     public func setError(_ description: String) {

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		25AE34422EFB060D00DECD22 /* ChatKit in Frameworks */ = {isa = PBXBuildFile; productRef = 25AE34412EFB060D00DECD22 /* ChatKit */; };
+		2549640B2F09EBF1009F2500 /* ChatKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2549640A2F09EBF1009F2500 /* ChatKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				25AE34422EFB060D00DECD22 /* ChatKit in Frameworks */,
+				2549640B2F09EBF1009F2500 /* ChatKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,7 +125,7 @@
 			);
 			name = ChatKitExample;
 			packageProductDependencies = (
-				25AE34412EFB060D00DECD22 /* ChatKit */,
+				2549640A2F09EBF1009F2500 /* ChatKit */,
 			);
 			productName = ChatKitExample;
 			productReference = 255B6B1B2EF9F35800E83475 /* ChatKitExample.app */;
@@ -210,7 +210,7 @@
 			mainGroup = 255B6B122EF9F35800E83475;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				25AE34322EFB03FC00DECD22 /* XCLocalSwiftPackageReference "../ChatKit" */,
+				254964092F09EBE5009F2500 /* XCLocalSwiftPackageReference "../../../ChatKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 255B6B1C2EF9F35800E83475 /* Products */;
@@ -589,16 +589,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		25AE34322EFB03FC00DECD22 /* XCLocalSwiftPackageReference "../ChatKit" */ = {
+		254964092F09EBE5009F2500 /* XCLocalSwiftPackageReference "../../../ChatKit" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../ChatKit;
+			relativePath = ../../../ChatKit;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		25AE34412EFB060D00DECD22 /* ChatKit */ = {
+		2549640A2F09EBF1009F2500 /* ChatKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 25AE34322EFB03FC00DECD22 /* XCLocalSwiftPackageReference "../ChatKit" */;
+			package = 254964092F09EBE5009F2500 /* XCLocalSwiftPackageReference "../../../ChatKit" */;
 			productName = ChatKit;
 		};
 /* End XCSwiftPackageProductDependency section */

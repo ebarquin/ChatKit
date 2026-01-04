@@ -59,7 +59,9 @@ public struct ChatView: View {
             )
             // Make the message list take the available space so the composer stays pinned to the bottom.
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-
+            
+            // Typing indicator visibility is driven purely by UI phase.
+            // ChatKit does not infer conversational state or message roles.
             if case .awaitingAssistant = viewModel.phase {
                 TypingBubbleRowView(
                     appearance: resolvedAppearance,

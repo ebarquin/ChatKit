@@ -61,9 +61,18 @@ public struct MessageRowView: View {
     @ViewBuilder
     private func bubble(style: BubbleStyle, alignment: Alignment) -> some View {
         Group {
-            if message.status == .streaming {
+            switch message.status {
+            case .idle:
                 TypingIndicatorView()
-            } else {
+            case .streaming, .completed:
+                Text(message.content)
+                    .font(appearance.font)
+                    .foregroundColor(style.foreground)
+            case .failed(let error):
+                Text(error)
+                    .font(appearance.font)
+                    .foregroundColor(.red)
+            default:
                 Text(message.content)
                     .font(appearance.font)
                     .foregroundColor(style.foreground)

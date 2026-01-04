@@ -18,6 +18,10 @@ public final class ChatViewModel: ObservableObject {
 
     public let onSend: (ChatMessage) -> Void
 
+    // MARK: - Private state
+
+    private var pendingAssistantMessageID: UUID?
+
     // MARK: - Init
 
     public init(
@@ -57,7 +61,7 @@ public final class ChatViewModel: ObservableObject {
         sendUserText(prompt.message)
     }
 
-    /// Inserts a placeholder assistant message in `streaming` state
+    /// Inserts a placeholder assistant message in `idle` state
     /// and marks the view model as awaiting a response.
     ///
     /// This is a convenience helper for request/response style integrations.
@@ -67,9 +71,10 @@ public final class ChatViewModel: ObservableObject {
         let message = ChatMessage(
             role: .assistant,
             content: "",
-            status: .streaming
+            status: .idle
         )
         messages.append(message)
+        pendingAssistantMessageID = message.id
         phase = .awaitingAssistant
         return message.id
     }
@@ -82,17 +87,29 @@ public final class ChatViewModel: ObservableObject {
         guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
         messages[index].content = content
         messages[index].status = .completed
+        pendingAssistantMessageID = nil
         phase = .ready
+    }
+
+    /// Updates the content of an existing assistant message.
+    /// This enables real or simulated streaming by progressively mutating the message content.
+    public func updateAssistantMessage(
+        id: UUID,
+        content: String
+    ) {
+        guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
+        messages[index].status = .streaming
+        messages[index].content = content
     }
 
     /// Consumer injects messages (assistant, system, user… we don't care)
     public func appendMessage(_ message: ChatMessage) {
         if message.role == .assistant,
-           let index = messages.lastIndex(where: {
-               $0.role == .assistant && $0.status == .streaming
-           }) {
+           let pendingID = pendingAssistantMessageID,
+           let index = messages.firstIndex(where: { $0.id == pendingID }) {
             messages[index].content = message.content
             messages[index].status = message.status
+            pendingAssistantMessageID = nil
             phase = .ready
             return
         }

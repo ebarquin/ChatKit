@@ -60,17 +60,6 @@ public struct ChatView: View {
             // Make the message list take the available space so the composer stays pinned to the bottom.
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            // Typing indicator visibility is driven purely by UI phase.
-            // ChatKit does not infer conversational state or message roles.
-            if case .awaitingAssistant = viewModel.phase {
-                TypingBubbleRowView(
-                    appearance: resolvedAppearance,
-                    layout: layout
-                )
-                .transition(.opacity)
-                .animation(.easeInOut(duration: 0.2), value: viewModel.phase)
-            }
-
             if !viewModel.quickPrompts.isEmpty {
                 QuickPromptBarView(
                     prompts: viewModel.quickPrompts,
@@ -92,62 +81,5 @@ public struct ChatView: View {
             )
         }
         .background(resolvedAppearance.background)
-    }
-}
-
-
-private struct TypingBubbleRowView: View {
-    let appearance: ChatAppearance
-    let layout: ChatLayout
-
-    var body: some View {
-        GeometryReader { geo in
-            let maxBubbleWidth = geo.size.width * layout.maxBubbleWidthRatio
-
-            HStack {
-                typingBubble(maxBubbleWidth: maxBubbleWidth)
-                Spacer(minLength: layout.minSpacer)
-            }
-            .padding(.horizontal, layout.horizontalPadding)
-            .padding(.vertical, 6)
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        // Keep it from taking over vertical space.
-        .frame(height: 48)
-        .accessibilityLabel("Assistant is typing")
-    }
-
-    private func typingBubble(maxBubbleWidth: CGFloat) -> some View {
-        TypingDotsView()
-            .padding(appearance.contentPadding)
-            .background(appearance.assistantBubble.background)
-            .cornerRadius(appearance.assistantBubble.cornerRadius)
-            .frame(maxWidth: maxBubbleWidth, alignment: .leading)
-    }
-}
-
-private struct TypingDotsView: View {
-    private let dotCount = 3
-    private let interval: TimeInterval = 0.22
-
-    var body: some View {
-        TimelineView(.animation) { timeline in
-            HStack(spacing: 6) {
-                ForEach(0..<dotCount, id: \.self) { index in
-                    Circle()
-                        .frame(width: 6, height: 6)
-                        .opacity(opacity(for: index, timelineDate: timeline.date))
-                }
-            }
-        }
-    }
-
-    private func opacity(for index: Int, timelineDate: Date) -> Double {
-        let time = timelineDate.timeIntervalSinceReferenceDate
-        let phaseOffset = Double(index) * 0.35
-        let wave = sin((time + phaseOffset) * 2 * .pi)
-
-        // Map sin(-1...1) → opacity(0.25...0.9)
-        return 0.25 + (wave + 1) * 0.325
     }
 }

@@ -60,13 +60,38 @@ public struct MessageRowView: View {
 
     @ViewBuilder
     private func bubble(style: BubbleStyle, alignment: Alignment) -> some View {
-        Text(message.content)
-            .font(appearance.font)
-            .foregroundColor(style.foreground)
-            .padding(appearance.contentPadding)
-            .background(style.background)
-            .cornerRadius(style.cornerRadius)
-            .frame(maxWidth: maxBubbleWidth, alignment: alignment)
-            .transition(.opacity)
+        Group {
+            if message.status == .streaming {
+                TypingIndicatorView()
+            } else {
+                Text(message.content)
+                    .font(appearance.font)
+                    .foregroundColor(style.foreground)
+            }
+        }
+        .padding(appearance.contentPadding)
+        .background(style.background)
+        .cornerRadius(style.cornerRadius)
+        .frame(maxWidth: maxBubbleWidth, alignment: alignment)
+        .transition(.opacity)
+    }
+}
+
+private struct TypingIndicatorView: View {
+    @State private var opacity: Double = 0.3
+
+    var body: some View {
+        Text("•••")
+            .font(.body)
+            .foregroundColor(.secondary)
+            .opacity(opacity)
+            .onAppear {
+                withAnimation(
+                    .easeInOut(duration: 0.6)
+                        .repeatForever(autoreverses: true)
+                ) {
+                    opacity = 1.0
+                }
+            }
     }
 }

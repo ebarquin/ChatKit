@@ -45,9 +45,11 @@ public final class ChatViewModel: ObservableObject {
         )
 
         messages.append(message)
+
         if awaitingMode == .automatic {
-            phase = .awaitingAssistant
+            _ = beginAwaitingAssistant()
         }
+
         onSend(message)
     }
 
@@ -55,9 +57,48 @@ public final class ChatViewModel: ObservableObject {
         sendUserText(prompt.message)
     }
 
+    /// Inserts a placeholder assistant message in `streaming` state
+    /// and marks the view model as awaiting a response.
+    ///
+    /// This is a convenience helper for request/response style integrations.
+    /// ChatKit does not update this message automatically.
+    @discardableResult
+    public func beginAwaitingAssistant() -> UUID {
+        let message = ChatMessage(
+            role: .assistant,
+            content: "",
+            status: .streaming
+        )
+        messages.append(message)
+        phase = .awaitingAssistant
+        return message.id
+    }
+
+    /// Completes a previously inserted assistant placeholder message.
+    public func completeAssistantMessage(
+        id: UUID,
+        content: String
+    ) {
+        guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
+        messages[index].content = content
+        messages[index].status = .completed
+        phase = .ready
+    }
+
     /// Consumer injects messages (assistant, system, user… we don't care)
     public func appendMessage(_ message: ChatMessage) {
+        if message.role == .assistant,
+           let index = messages.lastIndex(where: {
+               $0.role == .assistant && $0.status == .streaming
+           }) {
+            messages[index].content = message.content
+            messages[index].status = message.status
+            phase = .ready
+            return
+        }
+
         messages.append(message)
+
         if awaitingMode == .automatic, message.role == .assistant {
             phase = .ready
         }

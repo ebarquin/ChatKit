@@ -21,6 +21,7 @@ ChatKit renders whatever messages you provide, in the order you provide them.
 - Predictable, message-driven rendering
 - Customizable appearance, layout, and behavior
 - Explicit awaiting / loading states
+- Optional simulated assistant streaming (UI‑only, configurable speed)
 
 ---
 
@@ -90,6 +91,26 @@ ChatKit will automatically update the UI.
 
 ---
 
+### 5. Optional simulated streaming (UI‑only)
+
+ChatKit can **simulate** assistant typing by progressively rendering a completed response.  
+This is a UI concern only — no token streaming or networking is required.
+
+```swift
+viewModel.simulateAssistantStreaming(
+    fullText: "This response will appear progressively.",
+    wordInterval: 0.035 // seconds between words
+)
+```
+
+Notes:
+- `wordInterval` controls perceived typing speed.
+- Values below ~0.02s may be visually indistinguishable due to UI refresh limits.
+- Do not combine simulated streaming with `appendMessage` or `deliverAssistantText`
+  for the same message, as those APIs complete the message immediately.
+
+---
+
 ## 🧠 Design Philosophy
 
 ChatKit is a rendering client, not a chat engine.
@@ -121,7 +142,7 @@ ChatKit/
 ChatKit 1.0 focuses on API stability and architectural clarity.
 
 The following are intentionally out of scope:
-- Streaming helpers
+- Real token streaming (simulated UI streaming is supported)
 - Multi‑turn orchestration
 - Agent abstractions
 - Networking or LLM clients

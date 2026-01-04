@@ -74,7 +74,7 @@ public struct ChatAppearance: Sendable {
 public extension ChatAppearance {
 
     static let `default` = ChatAppearance(
-        background: Color(.systemBackground),
+        background: .clear,
         font: .body,
         contentPadding: 12,
         userBubble: BubbleStyle(

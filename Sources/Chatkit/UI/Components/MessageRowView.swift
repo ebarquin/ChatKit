@@ -64,18 +64,26 @@ public struct MessageRowView: View {
             switch message.status {
             case .idle:
                 TypingIndicatorView()
-            case .streaming, .completed:
+
+            case .streaming:
+                streamingText(style: style)
+
+            case .completed:
                 Text(message.content)
                     .font(appearance.font)
                     .foregroundColor(style.foreground)
+                    .animation(nil, value: message.content)
+
             case .failed(let error):
                 Text(error)
                     .font(appearance.font)
                     .foregroundColor(.red)
+
             default:
                 Text(message.content)
                     .font(appearance.font)
                     .foregroundColor(style.foreground)
+                    .animation(nil, value: message.content)
             }
         }
         .padding(appearance.contentPadding)
@@ -84,23 +92,15 @@ public struct MessageRowView: View {
         .frame(maxWidth: maxBubbleWidth, alignment: alignment)
         .transition(.opacity)
     }
-}
 
-private struct TypingIndicatorView: View {
-    @State private var opacity: Double = 0.3
-
-    var body: some View {
-        Text("•••")
-            .font(.body)
-            .foregroundColor(.secondary)
-            .opacity(opacity)
-            .onAppear {
-                withAnimation(
-                    .easeInOut(duration: 0.6)
-                        .repeatForever(autoreverses: true)
-                ) {
-                    opacity = 1.0
-                }
+    @ViewBuilder
+    private func streamingText(style: BubbleStyle) -> some View {
+        Text(message.content)
+            .font(appearance.font)
+            .foregroundColor(style.foreground)
+            .animation(nil, value: message.content)
+            .transaction { transaction in
+                transaction.animation = nil
             }
     }
 }

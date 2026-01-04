@@ -98,8 +98,10 @@ public final class ChatViewModel: ObservableObject {
         content: String
     ) {
         guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
-        messages[index].status = .streaming
-        messages[index].content = content
+        var updated = messages[index]
+        updated.status = .streaming
+        updated.content = content
+        messages[index] = updated
     }
 
     /// Consumer injects messages (assistant, system, user… we don't care)
@@ -125,6 +127,75 @@ public final class ChatViewModel: ObservableObject {
         messages.append(contentsOf: newMessages)
         if awaitingMode == .automatic, newMessages.contains(where: { $0.role == .assistant }) {
             phase = .ready
+        }
+    }
+
+    // MARK: - Assistant delivery (public)
+
+    /// Delivers an assistant response using the existing placeholder if present.
+    /// If no placeholder exists, it appends a new assistant message.
+    ///
+    /// This avoids duplicated assistant bubbles when using automatic awaiting mode.
+    public func deliverAssistantText(
+        _ text: String,
+        status: MessageStatus = .completed
+    ) {
+        if let pendingID = pendingAssistantMessageID,
+           let index = messages.firstIndex(where: { $0.id == pendingID }) {
+            messages[index].content = text
+            messages[index].status = status
+            pendingAssistantMessageID = nil
+            phase = .ready
+            return
+        }
+
+        messages.append(ChatMessage(role: .assistant, content: text, status: status))
+        if awaitingMode == .automatic {
+            phase = .ready
+        }
+    }
+
+    /// Simulates assistant streaming by progressively updating the existing placeholder
+    /// (or creating one if needed). This is UI-only streaming.
+    public func simulateAssistantStreaming(
+        fullText: String,
+        wordInterval: TimeInterval = 0.035
+    ) {
+        let id: UUID
+        if let pending = pendingAssistantMessageID {
+            id = pending
+        } else {
+            id = beginAwaitingAssistant()
+        }
+
+        // Switch from typing indicator to streaming content
+        updateAssistantMessage(id: id, content: "")
+
+        let words = fullText.split(separator: " ").map(String.init)
+        guard !words.isEmpty else {
+            completeAssistantMessage(id: id, content: "")
+            return
+        }
+
+        Task.detached { [weak self] in
+            guard let self else { return }
+            var current = ""
+            for (index, word) in words.enumerated() {
+                if index == 0 {
+                    current = word
+                } else {
+                    current += " " + word
+                }
+                await MainActor.run {
+                    self.updateAssistantMessage(id: id, content: current)
+                }
+                try? await Task.sleep(
+                    nanoseconds: UInt64(wordInterval * 1_000_000_000)
+                )
+            }
+            await MainActor.run {
+//                self.completeAssistantMessage(id: id, content: current)
+            }
         }
     }
 

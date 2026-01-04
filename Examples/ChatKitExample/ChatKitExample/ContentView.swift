@@ -23,36 +23,14 @@ struct ContentView: View {
                 QuickPrompt(id: UUID(), title: "Explain like I'm 5", message: "Explain like I'm 5")
             ],
             onSend: { message in
-                let assistantID = vmRef?.beginAwaitingAssistant()
-
                 DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-                    let fullResponse = "Fake LLM response to: \(message.content)"
-                    let words = fullResponse.split(separator: " ")
-
-                    var current = ""
-
-                    for word in words {
-                        current += (current.isEmpty ? "" : " ") + word
-
-                        DispatchQueue.main.async {
-                            if let id = assistantID {
-                                vmRef?.updateAssistantMessage(
-                                    id: id,
-                                    content: current
-                                )
-                            }
-                        }
-
-                        Thread.sleep(forTimeInterval: 0.3)
-                    }
+                    let response = "Fake LLM response to: \(message.content)"
 
                     DispatchQueue.main.async {
-                        if let id = assistantID {
-                            vmRef?.completeAssistantMessage(
-                                id: id,
-                                content: current
-                            )
-                        }
+                        vmRef?.simulateAssistantStreaming(
+                            fullText: response,
+                            wordInterval: 0.05
+                        )
                     }
                 }
             }

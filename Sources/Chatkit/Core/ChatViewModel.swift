@@ -158,6 +158,7 @@ public final class ChatViewModel: ObservableObject {
     /// Simulates assistant streaming by progressively updating the existing placeholder
     /// (or creating one if needed). This is UI-only streaming.
     public func simulateAssistantStreaming(
+        message: ChatMessage,
         fullText: String,
         wordInterval: TimeInterval = 0.035
     ) {

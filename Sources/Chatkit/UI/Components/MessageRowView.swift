@@ -75,9 +75,10 @@ public struct MessageRowView: View {
                     .animation(nil, value: message.content)
 
             case .failed(let error):
-                Text(error)
+                Text(error.isEmpty ? "Something went wrong." : error)
                     .font(appearance.font)
                     .foregroundColor(.red)
+                    .multilineTextAlignment(.leading)
 
             default:
                 Text(message.content)

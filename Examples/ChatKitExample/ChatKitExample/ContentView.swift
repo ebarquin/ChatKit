@@ -27,7 +27,14 @@ struct ContentView: View {
                     let response = "Fake LLM response to: \(message.content)"
 
                     DispatchQueue.main.async {
+                        let assistantMessage = ChatMessage(
+                            role: .assistant,
+                            content: "",
+                            status: .streaming
+                        )
+
                         vmRef?.simulateAssistantStreaming(
+                            message: assistantMessage,
                             fullText: response,
                             wordInterval: 0.05
                         )

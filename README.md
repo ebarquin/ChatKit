@@ -97,13 +97,25 @@ ChatKit can **simulate** assistant typing by progressively rendering a completed
 This is a UI concern only — no token streaming or networking is required.
 
 ```swift
+let assistantMessage = ChatMessage(
+    role: .assistant,
+    content: "",
+    status: .streaming
+)
+
 viewModel.simulateAssistantStreaming(
+    message: assistantMessage,
     fullText: "This response will appear progressively.",
     wordInterval: 0.035 // seconds between words
 )
 ```
 
+The assistant `ChatMessage` is created by the consumer and passed explicitly.
+ChatKit does not create messages implicitly — it only updates and renders the
+message you provide.
+
 Notes:
+- The consumer is responsible for creating and owning the assistant message.
 - `wordInterval` controls perceived typing speed.
 - Values below ~0.02s may be visually indistinguishable due to UI refresh limits.
 - Do not combine simulated streaming with `appendMessage` or `deliverAssistantText`
